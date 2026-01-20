@@ -1,0 +1,1 @@
+Real-time multilingual speech-to-text web application using FastAPI WebSockets and Faster-Whisper (CPU optimized). Supports live microphone streaming, automatic language detection, and AI dashboard UI. Runs fully offline.
