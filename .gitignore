@@ -1,0 +1,34 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.env
+venv/
+.venv/
+
+# Whisper / ML cache
+*.bin
+*.model
+*.pt
+*.onnx
+models/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Audio temp files
+*.wav
+*.mp3
+*.webm
+*.flac
+temp/
+recordings/
+
+# IDE
+.vscode/
+.idea/
+
+# Logs
+*.log
