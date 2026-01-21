@@ -20,7 +20,7 @@ This project demonstrates end-to-end AI system design, real-time streaming, and 
 ---
 🧠 Tech Stack
 ---
----
+
 Frontend
 
 HTML, CSS (AI Dashboard UI)
