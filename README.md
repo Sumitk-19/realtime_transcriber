@@ -27,7 +27,7 @@ HTML, CSS (AI Dashboard UI)
 
 JavaScript (MediaRecorder API, WebSockets)
 ---
----
+
 Backend
 ---
 Python
@@ -40,7 +40,7 @@ Faster-Whisper (CTranslate2, CPU optimized)
 
 FFmpeg (audio decoding)
 ---
----
+
 📁 Project Structure
 ---
 ```
