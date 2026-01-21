@@ -90,4 +90,4 @@ Open Frontend
 Open frontend/index.html in Chrome and click Start.
 
 Speak in any language and watch live transcription appear.
----
+
