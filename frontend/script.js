@@ -1,31 +1,40 @@
 let socket;
-let mediaRecorder;
+let audioContext;
+let processor;
+let input;
 
-function start() {
-  socket = new WebSocket("ws://localhost:8000/ws");
+async function start() {
+  socket = new WebSocket("ws://127.0.0.1:8000/ws");
 
-  navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
-    mediaRecorder = new MediaRecorder(stream, { mimeType: "audio/webm;codecs=opus" });
+  const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+  audioContext = new AudioContext({ sampleRate: 16000 });
 
-    mediaRecorder.ondataavailable = async (e) => {
-      const buffer = await e.data.arrayBuffer();
-      socket.send(buffer);
-    };
+  input = audioContext.createMediaStreamSource(stream);
+  processor = audioContext.createScriptProcessor(4096, 1, 1);
 
-    socket.onmessage = msg => {
-      const data = JSON.parse(msg.data);
-      document.getElementById("transcript").value += " " + data.text;
-      document.getElementById("language").innerText = "Language: " + data.language;
-    };
+  input.connect(processor);
+  processor.connect(audioContext.destination);
 
-    mediaRecorder.start(1500); // 1.5 sec chunks
-    document.getElementById("status").innerText = "Listening...";
-  });
+  processor.onaudioprocess = (e) => {
+    const floatData = e.inputBuffer.getChannelData(0);
+    const pcm16 = floatTo16BitPCM(floatData);
+    socket.send(pcm16);
+  };
 }
 
-
 function stop() {
-  mediaRecorder.stop();
+  processor.disconnect();
+  input.disconnect();
   socket.close();
-  document.getElementById("status").innerText = "Stopped";
+}
+
+function floatTo16BitPCM(float32Array) {
+  const buffer = new ArrayBuffer(float32Array.length * 2);
+  const view = new DataView(buffer);
+  let offset = 0;
+  for (let i = 0; i < float32Array.length; i++, offset += 2) {
+    let sample = Math.max(-1, Math.min(1, float32Array[i]));
+    view.setInt16(offset, sample < 0 ? sample * 0x8000 : sample * 0x7fff, true);
+  }
+  return buffer;
 }

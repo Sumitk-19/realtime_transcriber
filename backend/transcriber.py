@@ -1,20 +1,21 @@
-import os
-import tempfile
+import numpy as np
 from faster_whisper import WhisperModel
-
-TEMP_DIR = os.path.join(os.getcwd(), "temp_audio")
-os.makedirs(TEMP_DIR, exist_ok=True)
 
 class Transcriber:
     def __init__(self):
         self.model = WhisperModel("small", device="cpu", compute_type="int8")
+        self.buffer = b""
 
     def transcribe(self, audio_bytes):
-        with tempfile.NamedTemporaryFile(dir=TEMP_DIR, suffix=".webm", delete=False) as f:
-            f.write(audio_bytes)
-            file_path = f.name
+        self.buffer += audio_bytes
 
-        segments, info = self.model.transcribe(file_path)
+        # Ensure even number of bytes for int16
+        if len(self.buffer) % 2 != 0:
+            self.buffer = self.buffer[:-1]
+
+        audio_np = np.frombuffer(self.buffer, dtype=np.int16).astype(np.float32) / 32768.0
+
+        segments, info = self.model.transcribe(audio_np, language=None)
         text = " ".join([seg.text for seg in segments])
 
         return {
