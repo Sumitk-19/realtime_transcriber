@@ -30,3 +30,6 @@ async def websocket_endpoint(websocket: WebSocket):
 
     except Exception as e:
         print("Disconnected:", e)
+
+        print("Backend loaded successfully")
+
